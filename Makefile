@@ -1,17 +1,28 @@
 NAME = sgbditp
-SRC = $(NAME).c
-BUILD_DIR = bin
-FLAGS = -g -std=c99 -Wall -Wextra -Werror -pedantic
 
-all: $(BUILD_DIR)/$(NAME)
+FLAGS = -g -std=c99 -Wall -Wextra -Werror -pedantic -I./include
 
-$(BUILD_DIR)/$(NAME): $(SRC) | $(BUILD_DIR)
-	gcc $(SRC) -o $(BUILD_DIR)/$(NAME) $(FLAGS)
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
+
+EXECUTABLE = $(BIN_DIR)/$(NAME)
+
+all: directories $(EXECUTABLE)
+
+directories:
+	mkdir -p $(OBJ_DIR) $(BIN_DIR)
+
+$(EXECUTABLE): $(OBJS)
+	gcc $(FLAGS) $^ -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	gcc $(FLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(OBJ_DIR)/*.o $(BIN_DIR)/*
 
 .PHONY: all clean
