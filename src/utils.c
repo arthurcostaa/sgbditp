@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <sys/stat.h>
 
 #define INITIAL_SIZE 10
 
@@ -29,4 +31,10 @@ char *input()
     str[size] = '\0';
 
     return str;
+}
+
+bool file_exists(char *filename)
+{
+    struct stat buffer;
+    return stat(filename, &buffer) == 0;
 }

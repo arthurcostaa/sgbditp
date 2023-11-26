@@ -1,18 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "utils.h"
+#include "sgbdtools.h"
 
 int main()
 {
-    char *tablename;
 
-    printf("Enter the table name: ");
-    tablename = input();
-
-    printf("Table name: %s\n", tablename);
-
-    free(tablename);
+    create_table();
 
     return 0;
 }
