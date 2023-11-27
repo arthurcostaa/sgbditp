@@ -21,12 +21,25 @@ void create_table()
         return;
     }
 
+    if ((int)strlen(tablename) == 0)
+    {
+        printf("Erro! Não foi informado o nome da tabela!\n");
+        return;
+    }
+
     table = fopen(tablename, "w");
 
     while (true)
     {
         printf("Digite o nome da %dª coluna: ", column_number);
         column_name = input();
+
+        if (column_number == 1 && (int)strlen(column_name) == 0)
+        {
+            printf("Erro! A sua tabela deve ter pelo menos uma coluna!\n");
+            remove(tablename);
+            return;
+        }
 
         if ((int)strlen(column_name) == 0)
             break;
