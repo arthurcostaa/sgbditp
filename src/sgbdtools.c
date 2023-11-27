@@ -5,10 +5,11 @@
 
 #include "utils.h"
 
+const char *TABLE_LIST = "__table_list__";
+
 void store_table(char *tablename)
 {
     FILE *table_list_file;
-    const char *TABLE_LIST = "table_list";
 
     table_list_file = fopen(TABLE_LIST, "a+");
 
@@ -18,6 +19,17 @@ void store_table(char *tablename)
 
     fclose(table_list_file);
     
+}
+
+void show_tables()
+{
+    FILE *table_list = fopen(TABLE_LIST, "r");
+
+    if (table_list == NULL)
+    {
+        printf("Erro ao ler arquivo com nomes das tabelas.\n");
+        return;
+    }
 }
 
 void create_table()
