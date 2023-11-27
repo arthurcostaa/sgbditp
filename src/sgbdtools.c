@@ -5,6 +5,21 @@
 
 #include "utils.h"
 
+void store_table(char *tablename)
+{
+    FILE *table_list_file;
+    const char *TABLE_LIST = "table_list";
+
+    table_list_file = fopen(TABLE_LIST, "a+");
+
+    fputs(tablename, table_list_file);
+
+    fputc('\n', table_list_file);
+
+    fclose(table_list_file);
+    
+}
+
 void create_table()
 {
     char *tablename;
@@ -53,6 +68,7 @@ void create_table()
 
     fputc('\n', table);
 
+    store_table(tablename);
     fclose(table);
     free(tablename);
 }
