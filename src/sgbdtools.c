@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdbool.h>
 
 #include "utils.h"
@@ -28,6 +29,7 @@ void show_tables() {
 
     if (table_list == NULL) {
         printf("Erro ao ler arquivo com nomes das tabelas.\n");
+        printf("Provavelmente não foi criado nenhuma tabela.\n");
         return;
     }
 
@@ -35,6 +37,21 @@ void show_tables() {
         printf("%s", file_line);
 
     fclose(table_list);
+}
+
+void create_pk_file(char *tablename) {
+    FILE *pk_table;
+    char filename[MAX_TABLE_NAME_LENGTH + 10];
+
+    filename[0] = '\0';
+    strcat(filename, "pk_");
+    strcat(filename, tablename);
+
+    pk_table = fopen(filename, "w");
+    fputs("1", pk_table);
+
+    fclose(pk_table);
+
 }
 
 void create_table() {
@@ -67,7 +84,10 @@ void create_table() {
 
     // Read table columns
     while (true) {
-        printf("Digite o nome da %dª coluna: ", column_number + 1);
+        if (column_number == 0)
+            printf("Digite o nome da %dª coluna (PRIMARY KEY): ", column_number + 1);
+        else
+            printf("Digite o nome da %dª coluna: ", column_number + 1);
         fgets(column_name, MAX_COLUMN_NAME_LENGTH, stdin);
 
         // Clear buffer
@@ -100,13 +120,16 @@ void create_table() {
     table = fopen(tablename, "w");
 
     for (int i = 0; i < column_number; i++) {
-        if (i < column_number - 1)
+        if (i == 0)
+            fprintf(table, "pk_%s;", columns[i]);
+        else if (i < column_number - 1)
             fprintf(table, "%s;", columns[i]);
         else
-            fprintf(table, "%s", columns[i]);
+            fprintf(table, "%s\n", columns[i]);
     }
 
 
+    create_pk_file(tablename);
     store_table(tablename);
     fclose(table);
     free(columns);
