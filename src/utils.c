@@ -12,7 +12,7 @@ char *input()
 
     size_t size = 0;
 
-    while (1)
+    while (true)
     {
         c = getchar();
 

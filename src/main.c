@@ -9,8 +9,7 @@
 int main()
 {
 
-    // create_table();
-    show_tables();
+    create_table();
 
     return 0;
 }
