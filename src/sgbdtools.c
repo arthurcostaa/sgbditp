@@ -5,6 +5,8 @@
 
 #include "utils.h"
 
+#define MAX_TABLE_NAME_LENGTH 64
+
 const char *TABLE_LIST = "__table_list__";
 
 void store_table(char *tablename)
@@ -18,18 +20,25 @@ void store_table(char *tablename)
     fputc('\n', table_list_file);
 
     fclose(table_list_file);
-    
 }
 
 void show_tables()
 {
     FILE *table_list = fopen(TABLE_LIST, "r");
+    char file_line[MAX_TABLE_NAME_LENGTH];
 
     if (table_list == NULL)
     {
         printf("Erro ao ler arquivo com nomes das tabelas.\n");
         return;
     }
+
+    while (fgets(file_line, MAX_TABLE_NAME_LENGTH, table_list))
+    {
+        printf("%s", file_line);
+    }
+
+    fclose(table_list);
 }
 
 void create_table()
