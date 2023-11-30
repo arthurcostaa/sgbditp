@@ -23,6 +23,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	gcc $(FLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)/*.o $(BIN_DIR)/*
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
 .PHONY: all clean

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <stdbool.h>
 
 #include "utils.h"
@@ -16,9 +15,7 @@ void store_table(char *tablename) {
 
     table_list_file = fopen(TABLE_LIST, "a+");
 
-    fputs(tablename, table_list_file);
-
-    fputc('\n', table_list_file);
+    fprintf(table_list_file, "%s\n", tablename);
 
     fclose(table_list_file);
 }
@@ -39,21 +36,6 @@ void show_tables() {
     fclose(table_list);
 }
 
-void create_pk_file(char *tablename) {
-    FILE *pk_table;
-    char filename[MAX_TABLE_NAME_LENGTH + 10];
-
-    filename[0] = '\0';
-    strcat(filename, "pk_");
-    strcat(filename, tablename);
-
-    pk_table = fopen(filename, "w");
-    fputs("1", pk_table);
-
-    fclose(pk_table);
-
-}
-
 void create_table() {
     char tablename[MAX_COLUMN_NAME_LENGTH];
     char column_name[MAX_COLUMN_NAME_LENGTH];
@@ -63,14 +45,8 @@ void create_table() {
 
     printf("Digite o nome da tabela: ");
     fgets(tablename, MAX_TABLE_NAME_LENGTH, stdin);
-
-    // Clear buffer
-    if (!strchr(tablename, '\n')) {
-        int ch;
-        while ((ch = getchar()) != EOF && ch != '\n') {}
-    }
-
-    tablename[strcspn(tablename, "\n")] = 0;
+    clear_buffer(tablename);
+    remove_newline_character(tablename);
 
     if ((int)strlen(tablename) == 0) {
         printf("Erro! É necessário dar um nome para a sua tabela!\n");
@@ -82,22 +58,16 @@ void create_table() {
         return;
     }
 
-    // Read table columns
     while (true) {
+        // The first column is the primary key
         if (column_number == 0)
             printf("Digite o nome da %dª coluna (PRIMARY KEY): ", column_number + 1);
         else
             printf("Digite o nome da %dª coluna: ", column_number + 1);
+
         fgets(column_name, MAX_COLUMN_NAME_LENGTH, stdin);
-
-        // Clear buffer
-        if (!strchr(column_name, '\n')) {
-            int ch;
-            while (((ch = getchar()) != EOF) && (ch != '\n')) {}
-        }
-
-         // Remove '\n' from string
-        column_name[strcspn(column_name, "\n")] = 0;
+        clear_buffer(column_name);
+        remove_newline_character(column_name);
 
         if ((int)strlen(column_name) == 0 && column_number == 0) {
             printf("Erro! A sua tabela deve ter pelo menos uma coluna!\n");
@@ -108,8 +78,7 @@ void create_table() {
         if ((int)strlen(column_name) == 0)
             break;
 
-
-        columns[column_number] = (char *)malloc(strlen(column_name)); // adicionar mais 1?
+        columns[column_number] = (char *)malloc(strlen(column_name));
         strcpy(columns[column_number], column_name);
 
         column_number++;
@@ -120,16 +89,12 @@ void create_table() {
     table = fopen(tablename, "w");
 
     for (int i = 0; i < column_number; i++) {
-        if (i == 0)
-            fprintf(table, "pk_%s;", columns[i]);
-        else if (i < column_number - 1)
+        if (i < column_number - 1)
             fprintf(table, "%s;", columns[i]);
         else
             fprintf(table, "%s\n", columns[i]);
     }
 
-
-    create_pk_file(tablename);
     store_table(tablename);
     fclose(table);
     free(columns);

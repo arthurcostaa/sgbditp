@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #define INITIAL_SIZE 10
 
@@ -37,4 +38,15 @@ bool file_exists(char *filename)
 {
     struct stat buffer;
     return stat(filename, &buffer) == 0;
+}
+
+void clear_buffer(char *input) {
+    if (!strchr(input, '\n')) {
+        int ch;
+        while ((ch = getchar()) != EOF && ch != '\n') {}
+    }
+}
+
+void remove_newline_character(char *input) {
+    input[strcspn(input, "\n")] = 0;
 }
