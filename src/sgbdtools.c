@@ -99,3 +99,46 @@ void create_table() {
     fclose(table);
     free(columns);
 }
+
+void drop_table() {
+    char tablename[MAX_TABLE_NAME_LENGTH];
+    char temp_filename[MAX_TABLE_NAME_LENGTH];
+    FILE *file, *temp_file;
+    char buffer[MAX_TABLE_NAME_LENGTH];
+
+    printf("Cuidado! Essa é uma operação permanente e todos os seus dados serão perdidos.\n");
+    printf("Digite o nome da tabela que será apagada: ");
+    fgets(tablename, MAX_TABLE_NAME_LENGTH, stdin);
+    clear_buffer(tablename);
+    remove_newline_character(tablename);
+
+    if ((int)strlen(tablename) == 0) {
+        printf("Erro! Não foi informado o nome da tabela!\n");
+        return;
+    }
+
+    if (!file_exists(tablename)) {
+        printf("Erro! Essa tabela não existe!\n");
+        return;
+    }
+
+    strcpy(temp_filename, "__temp");
+    strcat(temp_filename, TABLE_LIST);
+
+    file = fopen(TABLE_LIST, "r");
+    temp_file = fopen(temp_filename, "w");
+
+    while (fgets(buffer, MAX_TABLE_NAME_LENGTH, file)) {
+        remove_newline_character(buffer);
+        if (strcmp(buffer, tablename) != 0) {
+            fprintf(temp_file, "%s\n", buffer);
+        }
+    }
+
+    fclose(file);
+    fclose(temp_file);
+
+    remove(TABLE_LIST);
+    rename(temp_filename, TABLE_LIST);
+    remove(tablename);
+}

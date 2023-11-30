@@ -8,11 +8,13 @@
 
 int main() {
 
-    create_table();
+    //create_table();
 
-    printf("\nTabelas:\n");
+    // printf("\nTabelas:\n");
 
-    show_tables();
+    // show_tables();
+
+    drop_table();
 
     return 0;
 }
