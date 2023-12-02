@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
+#include "sgbdtools.h"
 #include "utils.h"
 
 #define INITIAL_SIZE 10
@@ -117,4 +118,39 @@ char *join_string(char **array_text, char *separator, int num_items) {
     }
 
     return string;
+}
+
+char *read_data() {
+    char *data = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+
+    fgets(data, MAX_DATA_LENGTH, stdin);
+    clear_buffer(data);
+    remove_newline_character(data);
+
+    return data;
+}
+
+Types choose_type() {
+    int choice;
+
+    printf("Escolha o tipo da coluna:\n");
+    printf("1 - INT\n");
+    printf("2 - FLOAT\n");
+    printf("3 - STR\n");
+
+    printf("Digite o número correspondente ao tipo desejado: ");
+    scanf("%d", &choice);
+    getchar(); // clear buffer
+
+    switch (choice) {
+        case 1:
+            return INTEGER;
+        case 2:
+            return FLOAT;
+        case 3:
+            return STRING;
+        default:
+            printf("Erro! Escolha inválida. Valor padrão será STRING.\n");
+            return STRING;
+    }
 }

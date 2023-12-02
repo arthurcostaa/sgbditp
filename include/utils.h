@@ -1,9 +1,13 @@
-#ifndef DEF
-#define DEF
+#include "sgbdtools.h"
+
+#ifndef UTILS
+#define UTILS
+
 typedef struct {
     int length;
     char **values;
 } Array;
+
 #endif
 
 
@@ -14,3 +18,5 @@ void remove_newline_character(char *input);
 char *readline(char *filename);
 Array split_string(char *text, char *separator);
 char *join_string(char **array_text, char *separator, int num_items);
+char *read_data();
+Types choose_type();

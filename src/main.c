@@ -8,14 +8,13 @@
 
 int main() {
 
-    // create_table();
+    create_table();
 
-
-    // show_tables();
+    show_tables();
 
     // drop_table();
 
-    insert_data();
+    // insert_data();
 
     return 0;
 }
