@@ -42,7 +42,6 @@ typedef struct {
 bool create_table();
 bool save_table(char *tablename);
 bool show_tables();
-
+bool drop_table(char *table);
 // void show_tables();
-// void drop_table();
 // void insert_data();

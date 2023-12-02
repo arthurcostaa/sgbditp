@@ -113,48 +113,49 @@ bool create_table() {
     return true;
 }
 
-// void drop_table() {
-//     char tablename[MAX_DATA_LENGTH];
-//     char temp_filename[MAX_DATA_LENGTH];
-//     FILE *file, *temp_file;
-//     char buffer[MAX_DATA_LENGTH];
+bool drop_table(char *table) {
+    FILE *file, *temp_file;
+    char *buffer, *new_table;
 
-//     printf("Cuidado! Essa é uma operação permanente e todos os seus dados serão perdidos.\n");
-//     printf("Digite o nome da tabela que será apagada: ");
-//     fgets(tablename, MAX_DATA_LENGTH, stdin);
-//     clear_buffer(tablename);
-//     remove_newline_character(tablename);
+    if (!file_exists(table)) {
+        printf("Erro! A tabela não existe.\n");
+        return false;
+    }
 
-//     if ((int)strlen(tablename) == 0) {
-//         printf("Erro! Não foi informado o nome da tabela!\n");
-//         return;
-//     }
+    new_table = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    buffer = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
 
-//     if (!file_exists(tablename)) {
-//         printf("Erro! Essa tabela não existe!\n");
-//         return;
-//     }
+    strcpy(new_table, "__temp");
+    strcat(new_table, TABLE_LIST_FILE);
 
-//     strcpy(temp_filename, "__temp");
-//     strcat(temp_filename, TABLE_LIST);
+    file = fopen(TABLE_LIST_FILE, "r");
+    temp_file = fopen(new_table, "w");
 
-//     file = fopen(TABLE_LIST, "r");
-//     temp_file = fopen(temp_filename, "w");
+    if (file == NULL || temp_file == NULL) {
+        printf("Erro ao apagar tabela!\n");
+        return false;
+    }
 
-//     while (fgets(buffer, MAX_DATA_LENGTH, file)) {
-//         remove_newline_character(buffer);
-//         if (strcmp(buffer, tablename) != 0) {
-//             fprintf(temp_file, "%s\n", buffer);
-//         }
-//     }
+    while (fgets(buffer, MAX_DATA_LENGTH, file)) {
+        remove_newline_character(buffer);
+        
+        if (strcmp(buffer, table) != 0) {
+            fprintf(temp_file, "%s\n", buffer);
+        }
+    }
 
-//     fclose(file);
-//     fclose(temp_file);
+    fclose(file);
+    fclose(temp_file);
 
-//     remove(TABLE_LIST);
-//     rename(temp_filename, TABLE_LIST);
-//     remove(tablename);
-// }
+    remove(TABLE_LIST_FILE);
+    rename(new_table, TABLE_LIST_FILE);
+    remove(table);
+
+    free(new_table);
+    free(buffer);
+
+    return true;
+}
 
 // void insert_data() {
 //     char tablename[MAX_DATA_LENGTH];
