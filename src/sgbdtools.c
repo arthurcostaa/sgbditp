@@ -61,13 +61,9 @@ bool create_table() {
     printf("Digite o nome da coluna chave primária: ");
     table.pk_name = read_data();
 
-    while (true) {
+    while (table.num_columns < MAX_NUM_COLUMNS) {
         printf("Digite o nome da %dª coluna: ", table.num_columns + 1);
 
-        table.columns = (Column *)realloc(
-            table.columns,
-            sizeof(Column) * (table.num_columns + 1)
-        );
         table.columns[table.num_columns].column_name = (char *)malloc(
             sizeof(char) * MAX_DATA_LENGTH
         );
@@ -76,8 +72,6 @@ bool create_table() {
         if (strcmp(table.columns[table.num_columns].column_name, "") == 0) break;
 
         table.columns[table.num_columns].type = choose_type();
-
-        printf("Type: %d\n", table.columns[table.num_columns].type);
 
         table.num_columns++;
     }
@@ -89,20 +83,21 @@ bool create_table() {
         return false;
     }
 
+    // Save column names
     fprintf(table_file, "%s", table.pk_name);
     for (int i = 0; i < table.num_columns; i++) {
         fprintf(table_file, ";%s", table.columns[i].column_name);
     }
     fprintf(table_file, "\n");
 
-    fprintf(table_file, "%d", INTEGER);
-    for (int i = 1; i < table.num_columns; i++) {
+    // Save type of columns
+    fprintf(table_file, "%d", UINTEGER);
+    for (int i = 0; i < table.num_columns; i++) {
         fprintf(table_file, ";%d", table.columns[i].type);
     }
     fprintf(table_file, "\n");
 
     fclose(table_file);
-    free(table.columns);
 
     if (!save_table(table.tablename)) {
         printf("Erro ao criar tabela.\n");
@@ -157,50 +152,85 @@ bool drop_table(char *table) {
     return true;
 }
 
-// void insert_data() {
-//     char tablename[MAX_DATA_LENGTH];
-//     char *columns_line = NULL;
-//     char **data_array = NULL;
-//     char data[MAX_DATA_LENGTH];
-//     char *separator = ";";
-//     char *new_line = NULL;
-//     Array column_names;
-//     FILE *table;
+bool insert_data() {
+    Table table;
+    Array colum_names, colum_types;
+    char *new_line = NULL;
+    FILE *file;
 
-//     printf("Digite o nome da tabela: ");
-//     fgets(tablename, MAX_DATA_LENGTH, stdin);
-//     clear_buffer(tablename);
-//     remove_newline_character(tablename);
+    printf("Digite o nome da tabela: ");
+    table.tablename = read_data();
 
-//     if (!file_exists(tablename)) {
-//         printf("Erro! Essa tabela não existe!\n");
-//         return;
-//     }
+    if (!file_exists(table.tablename)) {
+        printf("Erro! Essa tabela não existe!\n");
+        return false;
+    }
 
-//     columns_line = readline(tablename);
-//     column_names = split_string(columns_line, ";");
+    colum_names = split_string(getline(table.tablename, 1), ";");
+    colum_types = split_string(getline(table.tablename, 2), ";");
 
-//     data_array = (char **)malloc(sizeof(char *) * column_names.length);
+    table.num_columns = colum_names.length;
+    for (int i = 0; i < colum_names.length; i++) {
+        table.columns[i].column_name = colum_names.values[i];
+        table.columns[i].type = atoi(colum_types.values[i]);
+    }
 
-//     for (int i = 0; i < column_names.length; i++) {
-//         printf("Valor de *%s*: ", column_names.values[i]);
-//         fgets(data, MAX_DATA_LENGTH, stdin);
-//         clear_buffer(data);
-//         remove_newline_character(data);
+    char *user_input = NULL;
+    table.data.fields = (char **)malloc(sizeof(char *) * MAX_NUM_COLUMNS);
+    for (int i = 0; i < table.num_columns; i++) {
+        printf("Valor do campo *%s*: ", table.columns[i].column_name);
+        user_input = read_data();
 
-//         data_array[i] = (char *)malloc(sizeof(char) * strlen(data));
-//         strcpy(data_array[i], data);
-//     }
+        table.data.fields[i] = (char *)malloc(sizeof(char) * strlen(user_input));
 
-//     new_line = join_string(data_array, separator, column_names.length);
+        switch (table.columns[i].type) {
+            case INTEGER:
+                if (!is_int(user_input)) {
+                    printf("Type error! Não é possível atribuir esse valor a uma coluna do tipo 'INTEGER'.\n");
+                    return false;
+                }
+                strcpy(table.data.fields[i], user_input);
+                break;
+            case FLOAT:
+                if (!is_float(user_input)) {
+                    printf("Type error! Não é possível atribuir esse valor a uma coluna do tipo 'FLOAT'.\n");
+                    return false;
+                }
+                strcpy(table.data.fields[i], user_input);
+                break;
+            case STRING:
+                strcpy(table.data.fields[i], user_input);
+                break;
+            case UINTEGER:
+                if (!is_uint(user_input)) {
+                    printf("Type error! Não é possível atribuir esse valor a uma coluna do tipo 'UINTEGER' (Chave primária).\n");
+                    return false;
+                }
+                strcpy(table.data.fields[i], user_input);
+                break;
+            default:
+                strcpy(table.data.fields[i], user_input);
+                break;
+        }
+    }
 
-//     table = fopen(tablename, "a+");
-//     fprintf(table, "%s\n", new_line);
-//     fclose(table);
+    new_line = join_string(table.data.fields, ";", table.num_columns);
 
-//     free(data_array);
-//     free(columns_line);
-//     free(new_line);
+    file = fopen(table.tablename, "a+");
 
-//     // TODO: Validate data before insert
-// }
+    if (file == NULL) {
+        printf("Erro ao inserir dados na tabela.\n");
+        return false;
+    }
+
+    fprintf(file, "%s\n", new_line);
+
+    fclose(file);
+
+    free(new_line);
+    free(table.data.fields);
+
+    return true;
+
+    // TODO: validate unique PK
+}

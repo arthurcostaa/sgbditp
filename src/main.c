@@ -8,12 +8,12 @@
 
 int main() {
 
-    create_table();
+    // create_table();
 
-    show_tables();
+    // show_tables();
 
-    // drop_table();
-
+    // drop_table("teste");
+    
     // insert_data();
 
     return 0;

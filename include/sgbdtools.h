@@ -2,25 +2,18 @@
 #define SGBDTOOLS
 
 #define MAX_DATA_LENGTH 65
+#define MAX_NUM_COLUMNS 20
+#define MAX_LINE_LENGTH (MAX_DATA_LENGTH * MAX_NUM_COLUMNS + MAX_NUM_COLUMNS - 1)
 
 typedef enum {
     INTEGER = 0,
     FLOAT = 1,
-    STRING = 2
+    STRING = 2,
+    UINTEGER = 3
 } Types;
 
 typedef struct {
-    Types type;
-    union {
-        char _null;
-        char _str[MAX_DATA_LENGTH];
-        int _int;
-        float _float;
-    } Value;
-} Field;
-
-typedef struct {
-    Field *fields;
+    char **fields;
 } Tuple;
 
 typedef struct {
@@ -30,11 +23,11 @@ typedef struct {
 
 typedef struct {
     char *tablename;
-    Column *columns;
+    Column columns[MAX_NUM_COLUMNS];
     int num_columns;
     unsigned int primary_key;
     char *pk_name;
-    Tuple *data;
+    Tuple data;
 } Table;
 
 #endif
@@ -43,5 +36,4 @@ bool create_table();
 bool save_table(char *tablename);
 bool show_tables();
 bool drop_table(char *table);
-// void show_tables();
-// void insert_data();
+bool insert_data();

@@ -106,7 +106,6 @@ char *join_string(char **array_text, char *separator, int num_items) {
 
     for (int i = 0; i < num_items; i++) {
         size_str += strlen(array_text[i]) + strlen(separator);
-        printf("Size of size_str: %ld\n", size_str);
         string = (char *)realloc(string, sizeof(char) * (size_str + 1));
 
         if (i < num_items - 1) {
@@ -153,4 +152,50 @@ Types choose_type() {
             printf("Erro! Escolha inválida. Valor padrão será STRING.\n");
             return STRING;
     }
+}
+
+char *getline(char *filename, int line) {
+    FILE *file;
+    char *string = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+    int num_lines = 0;
+
+    file = fopen(filename, "r");
+
+    while (fgets(string, sizeof(char) * MAX_LINE_LENGTH, file) != NULL) {
+        num_lines++;
+
+        if (num_lines == line) break;
+    }
+
+    fclose(file);
+
+    remove_newline_character(string);
+
+    return string;
+}
+
+bool is_int(char *number) {
+    char *reminder;
+    int base = 10;
+
+    strtol(number, &reminder, base);
+
+    return *reminder == '\0';
+}
+
+bool is_uint(char *number) {
+    char *reminder;
+    int base = 10;
+
+    long int result = strtol(number, &reminder, base);
+
+    return *reminder == '\0' && result > 0;
+}
+
+bool is_float(char *number) {
+    char *reminder;
+
+    strtod(number, &reminder);
+
+    return *reminder == '\0';
 }

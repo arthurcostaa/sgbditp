@@ -20,3 +20,7 @@ Array split_string(char *text, char *separator);
 char *join_string(char **array_text, char *separator, int num_items);
 char *read_data();
 Types choose_type();
+char *getline(char *filename, int line);
+bool is_int(char *number);
+bool is_float(char *number);
+bool is_uint(char *number);
