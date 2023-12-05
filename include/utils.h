@@ -24,3 +24,4 @@ char *getline(char *filename, int line);
 bool is_int(char *number);
 bool is_float(char *number);
 bool is_uint(char *number);
+void show_help_message();

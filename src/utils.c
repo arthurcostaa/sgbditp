@@ -199,3 +199,17 @@ bool is_float(char *number) {
 
     return *reminder == '\0';
 }
+
+void show_help_message() {
+    printf("Comandos disponíveis:\n");
+    printf("  help - mostra essa mensagem de ajuda\n");
+    printf("  clear - limpa a tela\n");
+    printf("  create - cria uma nova tabela\n");
+    printf("  drop - apaga uma tabela\n");
+    printf("  select - lista todos os dados de uma tabela\n");
+    printf("  search - pesquisar por dados em uma tabela\n");
+    printf("  delete - apagar uma tabela\n");
+    printf("  show - mostrar todas a tabelas criadas\n");
+    printf("  exit - sair do repl\n");
+    printf("\nDigite Ctrl-D para sair do repl\n");
+}

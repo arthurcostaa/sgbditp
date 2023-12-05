@@ -108,9 +108,12 @@ bool create_table() {
     return true;
 }
 
-bool drop_table(char *table) {
+bool drop_table() {
     FILE *file, *temp_file;
-    char *buffer, *new_table;
+    char *buffer, *new_table, *table;
+
+    printf("Digite o nome da tabela: ");
+    table = read_data();
 
     if (!file_exists(table)) {
         printf("Erro! A tabela não existe.\n");
