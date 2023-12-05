@@ -36,6 +36,7 @@ int main() {
         }
     }
     
+    free(cmd);
 
     return 0;
 }
