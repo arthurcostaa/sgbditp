@@ -29,6 +29,10 @@ int main() {
             show_tables();
         } else if (strcmp(cmd, "drop") == 0) {
             drop_table();
+        } else if (strcmp(cmd, "insert") == 0) {
+            insert_data();
+        } else {
+            printf("Esse comando não existe.\n");
         }
     }
     
