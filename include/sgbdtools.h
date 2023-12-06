@@ -37,3 +37,4 @@ bool save_table(char *tablename);
 bool show_tables();
 bool drop_table();
 bool insert_data();
+bool available_pk(char *table, char *pk);

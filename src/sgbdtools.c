@@ -155,6 +155,34 @@ bool drop_table() {
     return true;
 }
 
+bool available_pk(char *table, char *pk) {
+    FILE *file;
+    int line_number = 1;
+    char *text = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+    Array value;
+
+    file = fopen(table, "r");
+
+    if (file == NULL) {
+        printf("Erro ao ler verificar chave primária.\n");
+        return false;
+    }
+
+    while (fgets(text, MAX_LINE_LENGTH, file)) {
+        if (!(line_number <= 2)) {
+            value = split_string(text, ";");
+
+            if (strcmp(pk, value.values[0]) == 0) return false;
+        }
+        line_number++;
+    }
+
+    fclose(file);
+    free(text);
+
+    return true;
+}
+
 bool insert_data() {
     Table table;
     Array colum_names, colum_types;
@@ -183,6 +211,8 @@ bool insert_data() {
     for (int i = 0; i < table.num_columns; i++) {
         printf("Valor do campo *%s*: ", table.columns[i].column_name);
         user_input = read_data();
+
+        // validar pk
 
         table.data.fields[i] = (char *)malloc(sizeof(char) * strlen(user_input));
 
