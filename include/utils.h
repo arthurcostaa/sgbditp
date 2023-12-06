@@ -1,3 +1,5 @@
+#include "sgbdtools.h"
+
 #ifndef UTILS
 #define UTILS
 

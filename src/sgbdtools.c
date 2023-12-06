@@ -62,7 +62,7 @@ bool create_table() {
     table.pk_name = read_data();
 
     while (table.num_columns < MAX_NUM_COLUMNS) {
-        printf("Digite o nome da %dª coluna: ", table.num_columns + 1);
+        printf("Digite o nome da %dª coluna (ENTER para encerrar): ", table.num_columns + 1);
 
         table.columns[table.num_columns].column_name = (char *)malloc(
             sizeof(char) * MAX_DATA_LENGTH
@@ -212,7 +212,11 @@ bool insert_data() {
         printf("Valor do campo *%s*: ", table.columns[i].column_name);
         user_input = read_data();
 
-        // validar pk
+        // Primary key validation
+        if (i == 0 && !available_pk(table.tablename, user_input)) {
+            printf("Erro! Essa chave primária já está em uso.\n");
+            return false;
+        }
 
         table.data.fields[i] = (char *)malloc(sizeof(char) * strlen(user_input));
 
@@ -264,6 +268,4 @@ bool insert_data() {
     free(table.data.fields);
 
     return true;
-
-    // TODO: validate unique PK
 }
