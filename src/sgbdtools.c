@@ -269,3 +269,84 @@ bool insert_data() {
 
     return true;
 }
+
+bool delete_data() {
+    char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    char *primary_key = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    FILE *file, *temp_file;
+    char *temp_filename, *pk_to_delete, *text;
+
+    printf("Digite o nome da tabela: ");
+    tablename = read_data();
+
+    if (!file_exists(tablename)) {
+        printf("Erro! Essa tabela não existe.\n");
+        free(tablename);
+        return false;
+    }
+
+    printf("Digite o valor da chave primária: ");
+    primary_key = read_data();
+
+    if (!is_uint(primary_key)) {
+        printf("Erro! Valor inválido para chave primária.\n");
+        free(primary_key);
+        return false;
+    }
+
+    if (available_pk(tablename, primary_key)) {
+        printf(
+            "Erro! Não há registro com chave primária '%s' na tabela '%s'.\n",
+            primary_key,
+            tablename
+        );
+        return false;
+    }
+
+    file = fopen(tablename, "r");
+    if (file == NULL) {
+        printf("Erro ao tentar apagar registro.\n");
+        return false;
+    }
+
+    temp_filename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    strcat(temp_filename, "__temp__");
+    strcat(temp_filename, tablename);
+
+    temp_file = fopen(temp_filename, "w");
+    if (file == NULL) {
+        printf("Erro ao tentar apagar registro.\n");
+        free(temp_filename);
+        return false;
+    }
+
+    pk_to_delete = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    text = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+
+    int line = 1;
+    while (fgets(text, MAX_LINE_LENGTH, file)) {
+        if (line <= 2)
+            fprintf(temp_file, "%s", text);
+        else {
+            sscanf(text, "%[^;]", pk_to_delete);
+
+            if (strcmp(pk_to_delete, primary_key) != 0)
+                fprintf(temp_file, "%s", text);
+        };
+        line++;
+    }
+
+    fclose(temp_file);
+    fclose(file);
+
+    remove(tablename);
+    rename(temp_filename, tablename);
+
+    free(tablename);
+    free(primary_key);
+    free(temp_filename);
+    free(pk_to_delete);
+    free(text);
+
+    return true;
+}
