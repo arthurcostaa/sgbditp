@@ -10,6 +10,7 @@ int main() {
     char *cmd = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
 
     printf("Seja bem-vindo ao SGDBITP 1.0\n");
+    printf("Digite \"help\" para mais informações.\n");
     while (true) {
         printf("sgbditp> ");
         if (fgets(cmd, MAX_DATA_LENGTH, stdin) == NULL) break;

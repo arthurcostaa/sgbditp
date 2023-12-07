@@ -28,7 +28,7 @@ bool show_tables() {
     char file_line[MAX_DATA_LENGTH];
 
     if (file == NULL) {
-        printf("Erro! Não há um registro de tabelas.\n");
+        printf("Erro! Não há tabelas.\n");
         return false;
     }
 
