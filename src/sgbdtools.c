@@ -61,15 +61,25 @@ bool create_table() {
     printf("Digite o nome da coluna chave primária: ");
     table.pk_name = read_data();
 
+    if ((int)strlen(table.pk_name) == 0) {
+        printf("Erro! Não foi informado o nome da coluna chave primária.\n");
+        return false;
+    }
+
     while (table.num_columns < MAX_NUM_COLUMNS) {
         printf("Digite o nome da %dª coluna (ENTER para encerrar): ", table.num_columns + 1);
 
         table.columns[table.num_columns].column_name = (char *)malloc(
             sizeof(char) * MAX_DATA_LENGTH
         );
-        table.columns[table.num_columns].column_name = read_data("");
+        table.columns[table.num_columns].column_name = read_data();
 
-        if (strcmp(table.columns[table.num_columns].column_name, "") == 0) break;
+        if (strcmp(table.columns[table.num_columns].column_name, "") == 0
+            && table.num_columns == 0) {
+            printf("Erro! A sua tabela precisa de pelo menos mais uma coluna além da chave primária.\n");
+            return false;
+        }
+        else break;
 
         table.columns[table.num_columns].type = choose_type();
 
