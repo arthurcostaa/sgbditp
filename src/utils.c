@@ -213,3 +213,11 @@ void show_help_message() {
     printf("  exit - sair do repl\n");
     printf("\nDigite Ctrl-D para sair do repl\n");
 }
+
+void clear_screen() {
+    #ifdef _WIN_32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}

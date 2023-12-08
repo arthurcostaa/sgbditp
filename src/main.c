@@ -23,7 +23,7 @@ int main() {
         } else if (strcmp(cmd, "exit") == 0) {
             break;
         } else if (strcmp(cmd, "clear") == 0) {
-            system("clear");
+            clear_screen();
         } else if (strcmp(cmd, "create") == 0) {
             create_table();
         } else if (strcmp(cmd, "show") == 0) {
