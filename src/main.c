@@ -13,7 +13,10 @@ int main() {
     printf("Digite \"help\" para mais informações.\n");
     while (true) {
         printf("sgbditp> ");
-        if (fgets(cmd, MAX_DATA_LENGTH, stdin) == NULL) break;
+        if (fgets(cmd, MAX_DATA_LENGTH, stdin) == NULL) {
+            printf("\n");
+            break;
+        }
 
         clear_buffer(cmd);
         remove_newline_character(cmd);
