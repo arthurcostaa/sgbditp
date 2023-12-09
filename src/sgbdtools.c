@@ -84,7 +84,9 @@ bool create_table() {
             printf("Erro! A sua tabela precisa de pelo menos mais uma coluna além da chave primária.\n");
             return false;
         }
-        else break;
+
+        if (strcmp(table.columns[table.num_columns].column_name, "") == 0
+            && table.num_columns >= 1) break;
 
         table.columns[table.num_columns].type = choose_type();
 
