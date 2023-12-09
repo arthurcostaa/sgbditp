@@ -53,8 +53,13 @@ bool create_table() {
         return false;
     }
 
+    if (strcmp(table.tablename, TABLE_LIST_FILE) == 0) {
+        printf("Erro! Não é permitido criar uma tabela com esse nome.\n");
+        return false;
+    }
+
     if (file_exists(table.tablename)) {
-        printf("Erro! Já existe uma tabela com esse nome!\n");
+        printf("Erro! Já existe uma tabela com esse nome.\n");
         return false;
     }
 
