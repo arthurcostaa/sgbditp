@@ -3,44 +3,26 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "sgbdtools.h"
-#include "utils.h"
+#include "sgbd_utils.h"
 
-const char *TABLE_LIST_FILE = "__table_list__";
 
-bool save_table(char *tablename) {
-    FILE *file;
-
-    file = fopen(TABLE_LIST_FILE, "a+");
-
-    if (file == NULL)
-        return false;
-
-    fprintf(file, "%s\n", tablename);
-
-    fclose(file);
-
-    return true;
-}
-
-bool show_tables() {
+void show_tables() {
     FILE *file = fopen(TABLE_LIST_FILE, "r");
     char file_line[MAX_DATA_LENGTH];
 
     if (file == NULL) {
         printf("Erro! Não há tabelas.\n");
-        return false;
+        return;
     }
 
     while (fgets(file_line, MAX_DATA_LENGTH, file))
         printf("%s", file_line);
 
     fclose(file);
-
-    return true;
 }
 
-bool create_table() {
+
+void create_table() {
     Table table;
     table.num_columns = 0;
     FILE *table_file;
@@ -50,17 +32,17 @@ bool create_table() {
 
     if ((int)strlen(table.tablename) == 0) {
         printf("Erro! É necessário dar um nome para a sua tabela!\n");
-        return false;
+        return;
     }
 
     if (strcmp(table.tablename, TABLE_LIST_FILE) == 0) {
         printf("Erro! Não é permitido criar uma tabela com esse nome.\n");
-        return false;
+        return;
     }
 
     if (file_exists(table.tablename)) {
         printf("Erro! Já existe uma tabela com esse nome.\n");
-        return false;
+        return;
     }
 
     printf("Digite o nome da coluna chave primária: ");
@@ -68,7 +50,7 @@ bool create_table() {
 
     if ((int)strlen(table.pk_name) == 0) {
         printf("Erro! Não foi informado o nome da coluna chave primária.\n");
-        return false;
+        return;
     }
 
     while (table.num_columns < MAX_NUM_COLUMNS) {
@@ -82,7 +64,7 @@ bool create_table() {
         if (strcmp(table.columns[table.num_columns].column_name, "") == 0
             && table.num_columns == 0) {
             printf("Erro! A sua tabela precisa de pelo menos mais uma coluna além da chave primária.\n");
-            return false;
+            return;
         }
 
         if (strcmp(table.columns[table.num_columns].column_name, "") == 0
@@ -97,7 +79,7 @@ bool create_table() {
 
     if (table_file == NULL) {
         printf("Erro ao criar tabela.\n");
-        return false;
+        return;
     }
 
     // Save column names
@@ -119,13 +101,12 @@ bool create_table() {
     if (!save_table(table.tablename)) {
         printf("Erro ao criar tabela.\n");
         remove(table.tablename);
-        return false;
+        return;
     }
-
-    return true;
 }
 
-bool drop_table() {
+
+void drop_table() {
     FILE *file, *temp_file;
     char *buffer, *new_table, *table;
 
@@ -134,7 +115,7 @@ bool drop_table() {
 
     if (!file_exists(table)) {
         printf("Erro! A tabela não existe.\n");
-        return false;
+        return;
     }
 
     new_table = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
@@ -148,7 +129,7 @@ bool drop_table() {
 
     if (file == NULL || temp_file == NULL) {
         printf("Erro ao apagar tabela!\n");
-        return false;
+        return;
     }
 
     while (fgets(buffer, MAX_DATA_LENGTH, file)) {
@@ -168,39 +149,10 @@ bool drop_table() {
 
     free(new_table);
     free(buffer);
-
-    return true;
 }
 
-bool available_pk(char *table, char *pk) {
-    FILE *file;
-    int line_number = 1;
-    char *text = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
-    Array value;
 
-    file = fopen(table, "r");
-
-    if (file == NULL) {
-        printf("Erro ao ler verificar chave primária.\n");
-        return false;
-    }
-
-    while (fgets(text, MAX_LINE_LENGTH, file)) {
-        if (!(line_number <= 2)) {
-            value = split_string(text, ";");
-
-            if (strcmp(pk, value.values[0]) == 0) return false;
-        }
-        line_number++;
-    }
-
-    fclose(file);
-    free(text);
-
-    return true;
-}
-
-bool insert_data() {
+void insert_data() {
     Table table;
     Array colum_names, colum_types;
     char *new_line = NULL;
@@ -211,7 +163,7 @@ bool insert_data() {
 
     if (!file_exists(table.tablename)) {
         printf("Erro! Essa tabela não existe!\n");
-        return false;
+        return;
     }
 
     colum_names = split_string(getline(table.tablename, 1), ";");
@@ -232,7 +184,7 @@ bool insert_data() {
         // Primary key validation
         if (i == 0 && !available_pk(table.tablename, user_input)) {
             printf("Erro! Essa chave primária já está em uso.\n");
-            return false;
+            return;
         }
 
         table.data.fields[i] = (char *)malloc(sizeof(char) * strlen(user_input));
@@ -241,14 +193,14 @@ bool insert_data() {
             case INTEGER:
                 if (!is_int(user_input)) {
                     printf("Type error! Não é possível atribuir esse valor a uma coluna do tipo 'INTEGER'.\n");
-                    return false;
+                    return;
                 }
                 strcpy(table.data.fields[i], user_input);
                 break;
             case FLOAT:
                 if (!is_float(user_input)) {
                     printf("Type error! Não é possível atribuir esse valor a uma coluna do tipo 'FLOAT'.\n");
-                    return false;
+                    return;
                 }
                 strcpy(table.data.fields[i], user_input);
                 break;
@@ -258,7 +210,7 @@ bool insert_data() {
             case UINTEGER:
                 if (!is_uint(user_input)) {
                     printf("Type error! Não é possível atribuir esse valor a uma coluna do tipo 'UINTEGER' (Chave primária).\n");
-                    return false;
+                    return;
                 }
                 strcpy(table.data.fields[i], user_input);
                 break;
@@ -274,7 +226,7 @@ bool insert_data() {
 
     if (file == NULL) {
         printf("Erro ao inserir dados na tabela.\n");
-        return false;
+        return;
     }
 
     fprintf(file, "%s\n", new_line);
@@ -283,11 +235,10 @@ bool insert_data() {
 
     free(new_line);
     free(table.data.fields);
-
-    return true;
 }
 
-bool delete_data() {
+
+void delete_data() {
     char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
     char *primary_key = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
     FILE *file, *temp_file;
@@ -299,7 +250,7 @@ bool delete_data() {
     if (!file_exists(tablename)) {
         printf("Erro! Essa tabela não existe.\n");
         free(tablename);
-        return false;
+        return;
     }
 
     printf("Digite o valor da chave primária: ");
@@ -308,7 +259,7 @@ bool delete_data() {
     if (!is_uint(primary_key)) {
         printf("Erro! Valor inválido para chave primária.\n");
         free(primary_key);
-        return false;
+        return;
     }
 
     if (available_pk(tablename, primary_key)) {
@@ -317,13 +268,13 @@ bool delete_data() {
             primary_key,
             tablename
         );
-        return false;
+        return;
     }
 
     file = fopen(tablename, "r");
     if (file == NULL) {
         printf("Erro ao tentar apagar registro.\n");
-        return false;
+        return;
     }
 
     temp_filename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
@@ -334,7 +285,7 @@ bool delete_data() {
     if (file == NULL) {
         printf("Erro ao tentar apagar registro.\n");
         free(temp_filename);
-        return false;
+        return;
     }
 
     pk_to_delete = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
@@ -364,71 +315,10 @@ bool delete_data() {
     free(temp_filename);
     free(pk_to_delete);
     free(text);
-
-    return true;
 }
 
-int *max_column_lengths(Array *data, int num_cols, int num_rows) {
-    int *column_lengths = (int *)malloc(sizeof(int) * num_cols);
 
-    memset(column_lengths, 0, num_cols);
-
-    for (int row = 0; row < num_rows; row++) {
-        if (row == 1) continue;
-
-        for (int col = 0; col < num_cols; col++) {
-            if ((int)strlen(data[row].values[col]) > column_lengths[col]) {
-                column_lengths[col] = (int)strlen(data[row].values[col]);
-            }
-        }
-    }
-
-    return column_lengths;
-}
-
-Array *separate_table_values(char *tablename, int *num_rows) {
-    Array *table_data = NULL, row_data;
-    int line_number = 1;
-    char *row;
-    FILE *file;
-
-    file = fopen(tablename, "r");
-
-    row = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
-
-    while (fgets(row, MAX_LINE_LENGTH, file)) {
-        table_data = (Array *)realloc(
-            table_data,
-            sizeof(Array) * line_number
-        );
-
-        remove_newline_character(row);
-        row_data = split_string(row, ";");
-        table_data[line_number - 1] = row_data;
-
-        line_number++;
-    }
-
-    *num_rows = line_number - 1;
-
-    return table_data;
-}
-
-void print_table(Array *table_data,
-                 int *column_lengths,
-                 int num_rows,
-                 int num_cols) {
-    for (int row = 0; row < num_rows; row++) {
-        if (row == 1) continue;
-
-        for (int col = 0; col < num_cols; col++)
-            printf(" %-*s |", column_lengths[col], table_data[row].values[col]);
-
-        printf("\n");
-    }
-}
-
-bool select_all() {
+void select_all() {
     char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
     int num_rows, num_cols, *column_lengths = NULL;
     Array *table_data;
@@ -440,14 +330,14 @@ bool select_all() {
     if (!file_exists(tablename)) {
         printf("Erro! Essa tabela não existe.\n");
         free(tablename);
-        return false;
+        return;
     }
 
     table = fopen(tablename, "r");
 
     if (table == NULL) {
         printf("Erro ao ler dados da tabela.\n");
-        return false;
+        return;
     }
 
     table_data = separate_table_values(tablename, &num_rows);
@@ -460,6 +350,4 @@ bool select_all() {
 
     free(tablename);
     free(table_data);
-
-    return true;
 }

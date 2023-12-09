@@ -4,40 +4,17 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "sgbdtools.h"
 #include "utils.h"
+#include "sgbd.h"
 
 #define INITIAL_SIZE 10
 
-char *input() {
-    char *str = (char *)malloc(sizeof(char) * INITIAL_SIZE);
-    char c;
-
-    size_t size = 0;
-
-    while (true) {
-        c = getchar();
-
-        if (c == '\n')
-            break;
-
-        if (size > INITIAL_SIZE) {
-            str = (char *)realloc(str, sizeof(char) * (size + INITIAL_SIZE));
-        }
-
-        str[size++] = c;
-    }
-
-    str = (char *)realloc(str, sizeof(char) * (size + 1));
-    str[size] = '\0';
-
-    return str;
-}
 
 bool file_exists(char *filename) {
     struct stat buffer;
     return stat(filename, &buffer) == 0;
 }
+
 
 void clear_buffer(char *input) {
     if (!strchr(input, '\n')) {
@@ -46,9 +23,11 @@ void clear_buffer(char *input) {
     }
 }
 
+
 void remove_newline_character(char *input) {
     input[strcspn(input, "\n")] = 0;
 }
+
 
 char *readline(char *filename) {
     int c;
@@ -70,6 +49,7 @@ char *readline(char *filename) {
 
     return line;
 }
+
 
 Array split_string(char *text, char *separator) {
     char **strings_array = NULL;
@@ -99,6 +79,7 @@ Array split_string(char *text, char *separator) {
     return array;
 }
 
+
 char *join_string(char **array_text, char *separator, int num_items) {
     char *string = (char *)malloc(sizeof(char));
     string[0] = '\0';
@@ -119,6 +100,7 @@ char *join_string(char **array_text, char *separator, int num_items) {
     return string;
 }
 
+
 char *read_data() {
     char *data = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
 
@@ -129,30 +111,6 @@ char *read_data() {
     return data;
 }
 
-Types choose_type() {
-    int choice;
-
-    printf("Escolha o tipo da coluna:\n");
-    printf("1 - INT\n");
-    printf("2 - FLOAT\n");
-    printf("3 - STR\n");
-
-    printf("Digite o número correspondente ao tipo desejado: ");
-    scanf("%d", &choice);
-    getchar(); // clear buffer
-
-    switch (choice) {
-        case 1:
-            return INTEGER;
-        case 2:
-            return FLOAT;
-        case 3:
-            return STRING;
-        default:
-            printf("Erro! Escolha inválida. Valor padrão será STRING.\n");
-            return STRING;
-    }
-}
 
 char *getline(char *filename, int line) {
     FILE *file;
@@ -174,45 +132,6 @@ char *getline(char *filename, int line) {
     return string;
 }
 
-bool is_int(char *number) {
-    char *reminder;
-    int base = 10;
-
-    strtol(number, &reminder, base);
-
-    return *reminder == '\0';
-}
-
-bool is_uint(char *number) {
-    char *reminder;
-    int base = 10;
-
-    long int result = strtol(number, &reminder, base);
-
-    return *reminder == '\0' && result > 0;
-}
-
-bool is_float(char *number) {
-    char *reminder;
-
-    strtod(number, &reminder);
-
-    return *reminder == '\0';
-}
-
-void show_help_message() {
-    printf("Comandos disponíveis:\n");
-    printf("  help - mostra essa mensagem de ajuda\n");
-    printf("  clear - limpa a tela\n");
-    printf("  create - cria uma nova tabela\n");
-    printf("  drop - apaga uma tabela\n");
-    printf("  select - lista todos os dados de uma tabela\n");
-    printf("  search - pesquisar dados em uma tabela\n");
-    printf("  delete - apagar uma tabela\n");
-    printf("  show - mostrar todas a tabelas criadas\n");
-    printf("  exit - sair do repl\n");
-    printf("\nDigite Ctrl-D para sair do repl\n");
-}
 
 void clear_screen() {
     #ifdef _WIN_32

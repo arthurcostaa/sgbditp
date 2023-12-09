@@ -4,15 +4,19 @@
 #include <stdbool.h>
 
 #include "utils.h"
-#include "sgbdtools.h"
+#include "sgbd.h"
+#include "sgbd_commands.h"
+#include "sgbd_utils.h"
 
 int main() {
     char *cmd = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
 
     printf("Seja bem-vindo ao SGDBITP 1.0\n");
     printf("Digite \"help\" para mais informações.\n");
+
     while (true) {
         printf("sgbditp> ");
+
         if (fgets(cmd, MAX_DATA_LENGTH, stdin) == NULL) {
             printf("\n");
             break;
