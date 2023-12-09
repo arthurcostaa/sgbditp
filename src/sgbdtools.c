@@ -366,9 +366,27 @@ bool delete_data() {
     return true;
 }
 
+int *max_column_lengths(Array *data, int num_cols, int num_rows) {
+    int *column_lengths = (int *)malloc(sizeof(int) * num_cols);
+
+    memset(column_lengths, 0, num_cols);
+
+    for (int row = 0; row < num_rows; row++) {
+        if (row == 1) continue;
+
+        for (int col = 0; col < num_cols; col++) {
+            if ((int)strlen(data[row].values[col]) > column_lengths[col]) {
+                column_lengths[col] = (int)strlen(data[row].values[col]);
+            }
+        }
+    }
+
+    return column_lengths;
+}
+
 Array *separate_table_values(char *tablename, int *num_rows) {
     Array *table_data = NULL, row_data;
-    int line_number = 1, num_lines_table = 0;
+    int line_number = 1;
     char *row;
     FILE *file;
 
@@ -377,27 +395,26 @@ Array *separate_table_values(char *tablename, int *num_rows) {
     row = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
 
     while (fgets(row, MAX_LINE_LENGTH, file)) {
-        table_data = (Array *)realloc(table_data, sizeof(Array) * (line_number));
+        table_data = (Array *)realloc(
+            table_data,
+            sizeof(Array) * line_number
+        );
 
-        if (line_number != 2) {
-            remove_newline_character(row);
-            row_data = split_string(row, ";");
-            table_data[line_number - 1] = row_data;
-        }
-
-        if (line_number > 2) num_lines_table++;
+        remove_newline_character(row);
+        row_data = split_string(row, ";");
+        table_data[line_number - 1] = row_data;
 
         line_number++;
     }
 
-    *num_rows = num_lines_table++;;
+    *num_rows = line_number - 1;
 
     return table_data;
 }
 
 bool select_all() {
     char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
-    int num_rows;
+    int num_rows, *column_lengths = NULL;
     Array *table_data;
     FILE *table;
 
@@ -418,13 +435,19 @@ bool select_all() {
     }
 
     table_data = separate_table_values(tablename, &num_rows);
+    column_lengths = max_column_lengths(table_data, table_data[0].length, num_rows);
 
-    printf("A tabela tem %d linhas.\n\n", num_rows);
-
+    // TODO: Improve this code
+    for (int i = 0; i < 76; i++) printf("-");
+    printf("\n");
     for (int i = 0; i < num_rows; i++) {
+        if (i == 1) continue;
         for (int j = 0; j < table_data[i].length; j++) {
-            printf("%s ", table_data[i].values[j]);
+            if (j == 0) printf("| ");
+            printf(" %-*s |", column_lengths[j], table_data[i].values[j]);
         }
+        printf("\n");
+        for (int i = 0; i < 76; i++) printf("-");
         printf("\n");
     }
 
