@@ -366,11 +366,39 @@ bool delete_data() {
     return true;
 }
 
+Array *separate_table_values(char *tablename, int *num_rows) {
+    Array *table_data = NULL, row_data;
+    int line_number = 1, num_lines_table = 0;
+    char *row;
+    FILE *file;
+
+    file = fopen(tablename, "r");
+
+    row = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+
+    while (fgets(row, MAX_LINE_LENGTH, file)) {
+        table_data = (Array *)realloc(table_data, sizeof(Array) * (line_number));
+
+        if (line_number != 2) {
+            remove_newline_character(row);
+            row_data = split_string(row, ";");
+            table_data[line_number - 1] = row_data;
+        }
+
+        if (line_number > 2) num_lines_table++;
+
+        line_number++;
+    }
+
+    *num_rows = num_lines_table++;;
+
+    return table_data;
+}
+
 bool select_all() {
     char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
-    char *row;
-    int line_number = 1;
-    Array row_cells;
+    int num_rows;
+    Array *table_data;
     FILE *table;
 
     printf("Digite o nome da tabela: ");
@@ -389,25 +417,20 @@ bool select_all() {
         return false;
     }
 
-    row = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+    table_data = separate_table_values(tablename, &num_rows);
 
-    while (fgets(row, MAX_LINE_LENGTH, table)) {
-        if (line_number != 2) {
-            row_cells = split_string(row, ";");
-            // printf("Line %d: %s", line_number, row);
+    printf("A tabela tem %d linhas.\n\n", num_rows);
 
-            for (int i = 0; i < row_cells.length; i++) {
-                printf("%s  ", row_cells.values[i]);
-            }
-            printf("\n");
+    for (int i = 0; i < num_rows; i++) {
+        for (int j = 0; j < table_data[i].length; j++) {
+            printf("%s ", table_data[i].values[j]);
         }
-
-        line_number++;
+        printf("\n");
     }
 
     fclose(table);
     free(tablename);
-    free(row);
+    free(table_data);
 
     return true;
 }
