@@ -39,3 +39,4 @@ bool drop_table();
 bool insert_data();
 bool available_pk(char *table, char *pk);
 bool delete_data();
+bool select_all();

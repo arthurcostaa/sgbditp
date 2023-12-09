@@ -37,6 +37,8 @@ int main() {
             insert_data();
         } else if (strcmp(cmd, "delete") == 0) {
             delete_data();
+        } else if (strcmp(cmd, "select") == 0) {
+            select_all();
         } else {
             printf("Esse comando não existe.\n");
         }

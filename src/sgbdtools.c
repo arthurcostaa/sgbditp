@@ -365,3 +365,49 @@ bool delete_data() {
 
     return true;
 }
+
+bool select_all() {
+    char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    char *row;
+    int line_number = 1;
+    Array row_cells;
+    FILE *table;
+
+    printf("Digite o nome da tabela: ");
+    tablename = read_data();
+
+    if (!file_exists(tablename)) {
+        printf("Erro! Essa tabela não existe.\n");
+        free(tablename);
+        return false;
+    }
+
+    table = fopen(tablename, "r");
+
+    if (table == NULL) {
+        printf("Erro ao ler dados da tabela.\n");
+        return false;
+    }
+
+    row = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+
+    while (fgets(row, MAX_LINE_LENGTH, table)) {
+        if (line_number != 2) {
+            row_cells = split_string(row, ";");
+            // printf("Line %d: %s", line_number, row);
+
+            for (int i = 0; i < row_cells.length; i++) {
+                printf("%s  ", row_cells.values[i]);
+            }
+            printf("\n");
+        }
+
+        line_number++;
+    }
+
+    fclose(table);
+    free(tablename);
+    free(row);
+
+    return true;
+}
