@@ -414,9 +414,23 @@ Array *separate_table_values(char *tablename, int *num_rows) {
     return table_data;
 }
 
+void print_table(Array *table_data,
+                 int *column_lengths,
+                 int num_rows,
+                 int num_cols) {
+    for (int row = 0; row < num_rows; row++) {
+        if (row == 1) continue;
+
+        for (int col = 0; col < num_cols; col++)
+            printf(" %-*s |", column_lengths[col], table_data[row].values[col]);
+
+        printf("\n");
+    }
+}
+
 bool select_all() {
     char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
-    int num_rows, *column_lengths = NULL;
+    int num_rows, num_cols, *column_lengths = NULL;
     Array *table_data;
     FILE *table;
 
@@ -437,23 +451,13 @@ bool select_all() {
     }
 
     table_data = separate_table_values(tablename, &num_rows);
-    column_lengths = max_column_lengths(table_data, table_data[0].length, num_rows);
+    num_cols = table_data[0].length;
+    column_lengths = max_column_lengths(table_data, num_cols, num_rows);
 
-    // TODO: Improve this code
-    for (int i = 0; i < 76; i++) printf("-");
-    printf("\n");
-    for (int i = 0; i < num_rows; i++) {
-        if (i == 1) continue;
-        for (int j = 0; j < table_data[i].length; j++) {
-            if (j == 0) printf("| ");
-            printf(" %-*s |", column_lengths[j], table_data[i].values[j]);
-        }
-        printf("\n");
-        for (int i = 0; i < 76; i++) printf("-");
-        printf("\n");
-    }
+    print_table(table_data, column_lengths, num_rows, num_cols);
 
     fclose(table);
+
     free(tablename);
     free(table_data);
 
