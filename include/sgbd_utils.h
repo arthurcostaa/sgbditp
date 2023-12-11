@@ -26,3 +26,5 @@ bool is_uint(char *number);
 bool is_float(char *number);
 
 void show_help_message();
+
+void print_search_options();

@@ -184,3 +184,14 @@ void show_help_message() {
     printf("  exit - sair do repl\n");
     printf("\nDigite Ctrl-D para sair do repl\n");
 }
+
+
+void print_search_options() {
+    printf("\nOpções de pesquisa:\n");
+    printf("1. Valores maior que o valor informado\n");
+    printf("2. Valores maior ou igual que o valor informado\n");
+    printf("3. Valores igual o valor informado\n");
+    printf("4. Valores menor que o valor informado\n");
+    printf("5. valores menor ou igual que o valor informado\n");
+    printf("6. Valores próximo ao valor informado (apenas tipo STRING)\n");
+}
