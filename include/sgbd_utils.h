@@ -2,6 +2,15 @@
 #include "sgbd.h"
 #include "stdbool.h"
 
+typedef enum {
+    GT = 1,
+    GTE = 2,
+    EQ = 3,
+    LT = 4,
+    LTE = 5,
+    CLOSE = 6
+} SearchOptions;
+
 Types choose_type();
 
 bool save_table(char *tablename);
@@ -28,3 +37,7 @@ bool is_float(char *number);
 void show_help_message();
 
 void print_search_options();
+
+bool is_valid_search_option(int option);
+
+int str_to_type_column(char *type);

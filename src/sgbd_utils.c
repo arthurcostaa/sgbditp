@@ -5,6 +5,7 @@
 
 #include "utils.h"
 #include "sgbd.h"
+#include "sgbd_utils.h"
 
 Types choose_type() {
     int choice;
@@ -194,4 +195,43 @@ void print_search_options() {
     printf("4. Valores menor que o valor informado\n");
     printf("5. valores menor ou igual que o valor informado\n");
     printf("6. Valores próximo ao valor informado (apenas tipo STRING)\n");
+}
+
+bool is_valid_search_option(int option) {
+    switch (option) {
+        case GT:
+            return true;
+            break;
+        case GTE:
+            return true;
+            break;
+        case EQ:
+            return true;
+            break;
+        case LT:
+            return true;
+            break;
+        case LTE:
+            return true;
+            break;
+        case CLOSE:
+            return true;
+            break;
+        default:
+            break;
+    }
+
+    return false;
+}
+
+int str_to_type_column(char *type) {
+    if (strcmp(type, "0") == 0) {
+        return INTEGER;
+    } else if (strcmp(type, "1") == 0) {
+        return FLOAT;
+    } else if (strcmp(type, "2") == 0) {
+        return STRING;
+    }
+
+    return UINTEGER;
 }
