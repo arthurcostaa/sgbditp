@@ -1,4 +1,6 @@
 #include "utils.h"
+#include "sgbd.h"
+#include "stdbool.h"
 
 Types choose_type();
 

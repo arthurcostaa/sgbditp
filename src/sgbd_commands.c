@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "sgbd_utils.h"
+#include "sgbd.h"
 
 
 void show_tables() {
