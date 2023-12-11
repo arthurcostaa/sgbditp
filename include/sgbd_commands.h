@@ -11,3 +11,6 @@ void insert_data();
 void delete_data();
 
 void select_all();
+
+
+void search_values();

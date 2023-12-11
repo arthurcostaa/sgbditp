@@ -5,6 +5,7 @@
 
 #include "sgbd_utils.h"
 #include "sgbd.h"
+#include "utils.h"
 
 
 void show_tables() {
@@ -351,4 +352,104 @@ void select_all() {
 
     free(tablename);
     free(table_data);
+}
+
+void search_values() {
+    char *tablename = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    char *column_to_search = NULL, *type_column_to_search = NULL;
+    char *value_to_compare = NULL;
+    int search_option_choosed, col_type;
+    Array colum_names, colum_types;
+
+    printf("Digite o nome da tabela: ");
+    tablename = read_data();
+
+    if (!file_exists(tablename)) {
+        printf("Erro! Essa tabela não existe.\n");
+        return;
+    }
+
+    colum_names = split_string(getline(tablename, 1), ";");
+    colum_types = split_string(getline(tablename, 2), ";");
+
+    printf("\nA tabela '%s' possui as seguintes colunas:\n", tablename);
+    for (int i = 0; i < colum_names.length; i++) {
+        printf(
+            "%s (%s)\n",
+            colum_names.values[i],
+            show_types_name(colum_types.values[i])
+        );
+    }
+
+    column_to_search = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    printf("\nDigite o nome da coluna que você deseja pesquisar valores: ");
+    column_to_search = read_data();
+
+    bool valid_column = false;
+    for (int i = 0; i < colum_names.length; i++) {
+        if (strcmp(column_to_search, colum_names.values[i]) == 0) {
+            valid_column = true;
+            type_column_to_search = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+            type_column_to_search = colum_types.values[i];
+            break;
+        }
+    }
+
+    if (!valid_column) {
+        printf(
+            "Erro! A coluna '%s' não existe na tabela '%s'.\n",
+            column_to_search,
+            tablename
+        );
+        return;
+    }
+
+    col_type = str_to_type_column(type_column_to_search);
+
+    print_search_options();
+    printf("\nDigite o número correspondente a opção desejada: ");
+    scanf("%d", &search_option_choosed);
+    getchar();
+
+    if (!is_valid_search_option(search_option_choosed)) {
+        printf("Erro! Opção de pesquisa inválida.\n");
+        return;
+    }
+
+    if ((col_type == INTEGER || col_type == FLOAT) && search_option_choosed == CLOSE) {
+        printf(
+            "Erro! Não é possível realizar esse tipo de operação com valores do tipo %s.\n",
+            show_types_name(type_column_to_search)
+        );
+        return;
+    }
+
+    if (col_type == STRING &&
+        (search_option_choosed != CLOSE && search_option_choosed != EQ)) {
+        printf("Não é possível realizar essa operação com valores do tipo STRING.\n");
+        return;
+    }
+
+    value_to_compare = (char *)malloc(sizeof(char) * MAX_DATA_LENGTH);
+    printf("Digite o valor para ser utilizado na pesquisa: ");
+    value_to_compare = read_data();
+
+    if (
+        (col_type == INTEGER || col_type == FLOAT) &&
+        (!is_int(value_to_compare) || !is_float(value_to_compare))
+       ) {
+        printf(
+            "Type Error! Não é possível comparar '%s' com coluna do tipo '%s'.\n",
+            value_to_compare,
+            show_types_name(type_column_to_search)
+        );
+        return;
+    }
+
+    // TODO: search values in table
+
+    free(tablename);
+    free(column_to_search);
+    free(type_column_to_search);
+    free(value_to_compare);
 }
