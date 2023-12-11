@@ -25,3 +25,5 @@ char *read_data();
 char *getline(char *filename, int line);
 
 void clear_screen();
+
+char *show_types_name(char *type);

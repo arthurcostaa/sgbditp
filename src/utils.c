@@ -140,3 +140,17 @@ void clear_screen() {
         system("clear");
     #endif
 }
+
+
+char *show_types_name(char *type) {
+    if (strcmp(type, "0") == 0) {
+        return "INTEGER";
+    } else if (strcmp(type, "1") == 0) {
+        return "FLOAT";
+    } else if (strcmp(type, "2") == 0) {
+        return "STRING";
+    }
+    //else if (strcmp(type, "3") == 0) {}
+
+    return "UINTEGER";
+}
