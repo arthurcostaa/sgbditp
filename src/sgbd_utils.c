@@ -180,7 +180,8 @@ void show_help_message() {
     printf("  drop - apaga uma tabela\n");
     printf("  select - lista todos os dados de uma tabela\n");
     // printf("  search - pesquisar dados em uma tabela\n");
-    printf("  delete - apagar uma tabela\n");
+    printf("  insert - inserir novos dados na tabela\n");
+    printf("  delete - apagar tupla de uma tabela\n");
     printf("  show - mostrar todas a tabelas criadas\n");
     printf("  exit - sair do repl\n");
     printf("\nDigite Ctrl-D para sair do repl\n");
