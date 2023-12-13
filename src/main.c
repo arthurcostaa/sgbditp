@@ -43,8 +43,6 @@ int main() {
             delete_data();
         } else if (strcmp(cmd, "select") == 0) {
             select_all();
-        } else if (strcmp(cmd, "search") == 0) {
-            search_values();
         } else {
             printf("Esse comando não existe.\n");
         }

@@ -179,7 +179,7 @@ void show_help_message() {
     printf("  create - cria uma nova tabela\n");
     printf("  drop - apaga uma tabela\n");
     printf("  select - lista todos os dados de uma tabela\n");
-    printf("  search - pesquisar dados em uma tabela\n");
+    // printf("  search - pesquisar dados em uma tabela\n");
     printf("  delete - apagar uma tabela\n");
     printf("  show - mostrar todas a tabelas criadas\n");
     printf("  exit - sair do repl\n");
@@ -196,6 +196,7 @@ void print_search_options() {
     printf("5. valores menor ou igual que o valor informado\n");
     printf("6. Valores próximo ao valor informado (apenas tipo STRING)\n");
 }
+
 
 bool is_valid_search_option(int option) {
     switch (option) {
@@ -223,6 +224,7 @@ bool is_valid_search_option(int option) {
 
     return false;
 }
+
 
 int str_to_type_column(char *type) {
     if (strcmp(type, "0") == 0) {
